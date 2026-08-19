@@ -11,7 +11,7 @@ const links = [
 
 export default function Sidebar() {
   return (
-    <aside className="fixed left-0 top-0 z-20 hidden h-screen w-72 flex-col border-r border-slate-700/60 bg-slate-950/80 p-5 md:flex">
+    <aside role="navigation" aria-label="Main navigation" className="fixed left-0 top-0 z-20 hidden h-screen w-72 flex-col border-r border-slate-700/60 bg-slate-950/80 p-5 md:flex">
       <div className="mb-8 flex items-center gap-3 px-2">
         <div className="rounded-2xl bg-emerald-500/20 p-2 text-emerald-400">FG</div>
         <div>
@@ -24,8 +24,13 @@ export default function Sidebar() {
         {links.map((l) => {
           const Icon = l.icon
           return (
-            <NavLink key={l.to} to={l.to} end={l.to === '/'} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm ${isActive ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-300 hover:bg-slate-800'}`}>
-              <Icon size={16} />
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.to === '/'}
+              aria-label={l.label}
+              className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm ${isActive ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-300 hover:bg-slate-800'}`}>
+              <Icon size={16} aria-hidden="true" />
               {l.label}
             </NavLink>
           )

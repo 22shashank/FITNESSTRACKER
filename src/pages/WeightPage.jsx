@@ -17,8 +17,9 @@ export default function WeightPage() {
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="card rounded-2xl p-5">
           <div className="mt-4 flex gap-3">
-            <input type="number" value={entry} onChange={(e)=>setEntry(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Weight in kg" />
-            <button onClick={add} className="rounded-xl bg-emerald-500 px-4 py-2.5 text-white">Add</button>
+            <label className="sr-only" htmlFor="weight-entry">Weight in kg</label>
+            <input id="weight-entry" type="number" value={entry} onChange={(e)=>setEntry(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Weight in kg" />
+            <button type="button" onClick={add} className="rounded-xl bg-emerald-500 px-4 py-2.5 text-white">Add</button>
           </div>
           <div className="mt-5 space-y-2">
             {weightEntries.slice(-7).map((w) => <div key={w.id} className="flex justify-between text-sm text-slate-300"><span>{w.date}</span><span>{w.value} kg</span></div>)}

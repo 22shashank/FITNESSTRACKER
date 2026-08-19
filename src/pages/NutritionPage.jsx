@@ -39,8 +39,9 @@ export default function NutritionPage() {
         <div className="card rounded-2xl p-5">
           <h4 className="text-xl font-semibold text-white">Add food</h4>
           <div className="mt-4 space-y-3">
-            <input value={name} onChange={(e)=>setName(e.target.value)} placeholder="Food name" className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" />
-            <button onClick={handleAdd} className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-medium text-white">Add to meal</button>
+            <label className="sr-only" htmlFor="food-name">Food name</label>
+            <input id="food-name" value={name} onChange={(e)=>setName(e.target.value)} placeholder="Food name" className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" />
+            <button type="button" onClick={handleAdd} className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-medium text-white">Add to meal</button>
           </div>
         </div>
       </div>

@@ -38,8 +38,9 @@ export default function WorkoutPage() {
         <div className="card rounded-2xl p-5">
           <h4 className="text-xl font-semibold text-white">Add workout</h4>
           <div className="mt-4 space-y-3">
-            <input value={title} onChange={(e)=>setTitle(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Workout name" />
-            <button onClick={handleAdd} className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-medium text-white">Save workout</button>
+            <label className="sr-only" htmlFor="workout-title">Workout name</label>
+            <input id="workout-title" value={title} onChange={(e)=>setTitle(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Workout name" />
+            <button type="button" onClick={handleAdd} className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-medium text-white">Save workout</button>
           </div>
         </div>
       </div>

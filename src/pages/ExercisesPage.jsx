@@ -12,7 +12,8 @@ export default function ExercisesPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Exercise library</p>
           <h3 className="mt-2 text-3xl font-semibold text-white">50+ exercises</h3>
         </div>
-        <input value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Search exercises" className="w-full max-w-xs rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" />
+        <label className="sr-only" htmlFor="ex-search">Search exercises</label>
+        <input id="ex-search" value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Search exercises" className="w-full max-w-xs rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

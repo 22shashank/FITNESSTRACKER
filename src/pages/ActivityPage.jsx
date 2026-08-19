@@ -25,10 +25,13 @@ export default function ActivityPage() {
 
         <div className="card rounded-2xl p-5">
           <div className="space-y-3">
-            <input type="number" value={form.steps} onChange={(e)=>setForm({...form, steps: Number(e.target.value)})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Steps" />
-            <input type="number" value={form.running} onChange={(e)=>setForm({...form, running: Number(e.target.value)})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Running km" />
-            <input type="number" value={form.calories} onChange={(e)=>setForm({...form, calories: Number(e.target.value)})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Active calories" />
-            <button onClick={save} className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-medium text-white">Save activity</button>
+            <label className="sr-only" htmlFor="activity-steps">Steps</label>
+            <input id="activity-steps" type="number" value={form.steps} onChange={(e)=>setForm({...form, steps: Number(e.target.value)})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Steps" />
+            <label className="sr-only" htmlFor="activity-running">Running km</label>
+            <input id="activity-running" type="number" value={form.running} onChange={(e)=>setForm({...form, running: Number(e.target.value)})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Running km" />
+            <label className="sr-only" htmlFor="activity-calories">Active calories</label>
+            <input id="activity-calories" type="number" value={form.calories} onChange={(e)=>setForm({...form, calories: Number(e.target.value)})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Active calories" />
+            <button type="button" onClick={save} className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-medium text-white">Save activity</button>
           </div>
         </div>
       </div>

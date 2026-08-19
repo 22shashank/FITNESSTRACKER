@@ -34,8 +34,10 @@ export default function GoalsPage() {
         <div className="card rounded-2xl p-5">
           <h4 className="text-xl font-semibold text-white">Create goal</h4>
           <div className="mt-4 space-y-3">
-            <input value={form.name} onChange={(e)=>setForm({...form, name: e.target.value})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Goal name" />
-            <input type="number" value={form.target} onChange={(e)=>setForm({...form, target: Number(e.target.value)})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Target" />
+            <label className="sr-only" htmlFor="goal-name">Goal name</label>
+            <input id="goal-name" value={form.name} onChange={(e)=>setForm({...form, name: e.target.value})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Goal name" />
+            <label className="sr-only" htmlFor="goal-target">Target</label>
+            <input id="goal-target" type="number" value={form.target} onChange={(e)=>setForm({...form, target: Number(e.target.value)})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" placeholder="Target" />
             <input type="date" value={form.deadline} onChange={(e)=>setForm({...form, deadline: e.target.value})} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white" />
             <button onClick={save} className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-medium text-white">Save goal</button>
           </div>

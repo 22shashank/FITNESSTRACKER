@@ -13,7 +13,7 @@ export default function Header({ showUser = true }) {
         </div>
         {showUser ? (
           <div className="flex items-center gap-3">
-            <button onClick={logout} className="flex items-center gap-2 rounded-xl bg-emerald-500 px-3 py-2 text-sm font-medium text-white">Logout</button>
+            <button type="button" onClick={logout} aria-label="Logout" className="flex items-center gap-2 rounded-xl bg-emerald-500 px-3 py-2 text-sm font-medium text-white">Logout</button>
           </div>
         ) : null}
       </div>

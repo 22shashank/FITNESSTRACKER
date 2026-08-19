@@ -13,7 +13,7 @@ export default function Toast({ message, type = 'info', onClose }) {
   }
 
   return (
-    <div className={`fixed right-4 bottom-6 z-50 w-80 rounded-lg px-4 py-3 text-sm text-white ${colors[type] || colors.info}`}>
+    <div role="status" aria-live="polite" className={`fixed right-4 bottom-6 z-50 w-80 rounded-lg px-4 py-3 text-sm text-white ${colors[type] || colors.info}`}>
       {message}
     </div>
   )
