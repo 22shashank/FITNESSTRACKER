@@ -1,87 +1,68 @@
 # FitGrid Fitness Analytics
 
-Run locally:
+FitGrid is a full-stack personal fitness and performance analytics platform. Registered users sync their fitness state to a Node/Express API backed by SQLite, while localStorage keeps the app useful offline.
 
-```bash
-npm install
-npm run dev
-```
+## Features
 
-This is a frontend-only, local-first personal fitness and performance analytics platform. Data is persisted to `localStorage`, demo data can be loaded from Settings, and the app includes an installable offline shell.
-
-## Product Features
-
-- Workout, nutrition, macro, weight, water, sleep, activity, goal, habit, and PR tracking
-- Macro dashboard with serving-size calculations, custom foods, favorites, recents, targets, history, and calendar
-- Dashboard analytics for calories, protein, steps, workouts, sleep, weight, and selectable 7/30/90-day trends
-- Reusable analytics utilities for workout volume, estimated 1RM, progression, macro aggregation, and goal progress
-- Local fallback fitness assistant at `/assistant`; no API key is shipped to the browser
-- Demo data, JSON export/import, reset flow, and defensive localStorage handling
+- Workout, nutrition, macro, weight, water, sleep, activity, goal, habit, PR, and progression tracking
+- Dashboard analytics with real Recharts trends and generated insights
+- Local fallback fitness assistant at `/assistant`
+- Server-backed registration and login at `/account`
+- Password hashing with bcrypt and JWT authentication
+- Per-user SQLite state persistence through `/api/state`
+- Demo data, JSON export/import, reset flow, and PWA offline shell
 
 ## Architecture
 
 ```text
-Pages and components
-	|
-FitnessContext and assistant services
-	|
-analytics.js, macroStorage.js, storage.js
-	|
-localStorage / PWA cache
+React pages/components
+        |
+FitnessContext + client API service
+        |
+Express routes + JWT middleware
+        |
+SQLite users and per-user fitness state
 ```
 
-The provider is the current state boundary. Storage and analytics are kept in services/utilities so a future REST adapter can replace persistence without changing page contracts. LocalStorage authentication is a demo convenience and is not presented as secure authentication.
+The client uses `src/services/api.js` instead of calling the database directly. The provider hydrates state from the API when a JWT exists and falls back to localStorage when the server is unavailable. This keeps the storage boundary replaceable for a future managed database or REST deployment.
 
 ## Tech Stack
 
-React 19, React Router, Vite, Tailwind CSS, Lucide React, Recharts, and browser localStorage.
+React 19, React Router, Vite, Tailwind CSS, Recharts, Lucide React, Node.js, Express, SQLite via better-sqlite3, bcryptjs, and JSON Web Tokens.
 
-## Testing and Build
+## Run Locally
+
+```bash
+npm install
+cp .env.example .env
+npm run dev:fullstack
+```
+
+On Windows, copy `.env.example` to `.env` manually if `cp` is unavailable. The frontend runs at `http://localhost:5173`; the API runs at `http://localhost:3001`. Register at `/account` to create a server-backed account.
+
+Set a long random `JWT_SECRET` before any real deployment. The SQLite file is created at `server/data/fitgrid.sqlite` and is ignored by git.
+
+## Testing
 
 ```bash
 npm run test:headless
 npm run build
 ```
 
-The smoke suite covers storage import/export/reset, existing core records, workout metrics, 1RM, progression, macro aggregation, and goal progress.
+The smoke tests cover storage import/export/reset, existing core records, workout metrics, estimated 1RM, progression, macro aggregation, goal progress, PR detection, and habit streaks.
 
-## PWA and Future Work
+## PWA and Offline Behavior
 
-The manifest and service worker cache the application shell. Locally persisted fitness data remains available offline. Future work includes extracting feature-specific hooks, adding a server-side REST adapter, richer workout set logging and PR detection, component tests, and a user-controlled light theme.
-# React + Vite
+The manifest and service worker cache the application shell. Local fitness data remains available offline. Server sync resumes automatically when a valid JWT and API are available.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Security Notes
 
-Currently, two official plugins are available:
+Passwords are hashed server-side and sessions use signed JWTs. The client never contains a database credential or AI secret. Production deployments should use HTTPS, a strong secret manager, rate limiting, secure cookies or short-lived tokens, and a managed database backup strategy.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Future Improvements
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-## Quick test & QA
-
-Run the headless smoke tests that validate persistence and core flows:
-
-```bash
-npm run test:headless
-```
-
-Manual QA checklist:
-- Open the app (`npm run dev`) and go to Settings → Load Demo Data
-- Verify Dashboard counts (Workouts, Meals, Water)
-- Add a workout, add a meal/food, add weight/water/sleep/activity entries
-- Export data, then Reset and Import the exported JSON to verify persistence
-
-If you need to debug headless runs, run the individual scripts:
-
-```bash
-npm run test:storage
-npm run test:core
-```
+- Database migrations and production deployment configuration
+- Feature-specific hooks and service interfaces
+- Managed Postgres or MongoDB adapter
+- Refresh-token rotation and account recovery
+- Component tests and accessibility automation

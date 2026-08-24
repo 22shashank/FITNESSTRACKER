@@ -20,6 +20,7 @@ import ExercisesPage from './pages/ExercisesPage'
 import MacrosPage from './pages/MacrosPage'
 import AssistantPage from './pages/AssistantPage'
 import HabitsPage from './pages/HabitsPage'
+import AuthPage from './pages/AuthPage'
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
               <Route path="/macros" element={<MacrosPage />} />
               <Route path="/assistant" element={<AssistantPage />} />
               <Route path="/habits" element={<HabitsPage />} />
+              <Route path="/account" element={<AuthPage />} />
               <Route path="/calories" element={<CaloriesPage />} />
               <Route path="/weight" element={<WeightPage />} />
               <Route path="/activity" element={<ActivityPage />} />

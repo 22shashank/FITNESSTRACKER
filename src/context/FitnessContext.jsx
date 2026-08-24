@@ -8,6 +8,7 @@ import {
 } from '../services/storage'
 import { loadMacroState, writeMacroState } from '../services/macroStorage'
 import { detectNewPersonalRecords, derivePersonalRecords } from '../utils/analytics'
+import { fetchRemoteState, getApiToken, loginAccount, registerAccount, saveRemoteState, setApiToken } from '../services/api'
 
 const FitnessContext = createContext(null)
 
@@ -38,6 +39,8 @@ export function FitnessProvider({ children }) {
   const [customFoods, setCustomFoods] = useState(macroState.customFoods)
   const [favoriteFoods, setFavoriteFoods] = useState(macroState.favorites)
   const [recentFoods, setRecentFoods] = useState(macroState.recents)
+  const [remoteReady, setRemoteReady] = useState(false)
+  const [syncStatus, setSyncStatus] = useState(getApiToken() ? 'connecting' : 'local')
 
   useEffect(() => { safeWrite('fitness_user', user) }, [user])
 
@@ -65,20 +68,97 @@ export function FitnessProvider({ children }) {
   useEffect(() => { writeMacroState('favorites', favoriteFoods) }, [favoriteFoods])
   useEffect(() => { writeMacroState('recents', recentFoods) }, [recentFoods])
 
-  function login({ email, name }) {
+  function getStateSnapshot() {
+    return {
+      fitness_user: user, fitness_profile: profile, fitness_settings: settings, fitness_workouts: workouts,
+      fitness_exercises: exercises, fitness_foods: foods, fitness_meals: meals, fitness_weight: weightEntries,
+      fitness_water: waterEntries, fitness_activity: activityEntries, fitness_sleep: sleepEntries, fitness_goals: goals,
+      fitness_habits: habits, fitness_records: records, fitness_notifications: notifications, fitness_xp: xp,
+      fitness_runs: runs, fitness_macro_targets: macroTargets, fitness_food_entries: macroEntries,
+      fitness_custom_foods: customFoods, fitness_favorite_foods: favoriteFoods, fitness_recent_foods: recentFoods,
+    }
+  }
+
+  function applyRemoteState(state) {
+    if (!state) return
+    setUser(state.fitness_user || null)
+    setProfileState(state.fitness_profile || {})
+    setSettings(state.fitness_settings || {})
+    setWorkouts(state.fitness_workouts || [])
+    setExercises(state.fitness_exercises || [])
+    setFoods(state.fitness_foods || [])
+    setMeals(state.fitness_meals || [])
+    setWeightEntries(state.fitness_weight || [])
+    setWaterEntries(state.fitness_water || [])
+    setActivityEntries(state.fitness_activity || [])
+    setSleepEntries(state.fitness_sleep || [])
+    setGoals(state.fitness_goals || [])
+    setHabits(state.fitness_habits || [])
+    setRecords(state.fitness_records || [])
+    setNotifications(state.fitness_notifications || [])
+    setXp(state.fitness_xp || { xp: 0, level: 1 })
+    setRuns(state.fitness_runs || [])
+    setMacroTargetsState(state.fitness_macro_targets || macroState.targets)
+    setMacroEntries(state.fitness_food_entries || [])
+    setCustomFoods(state.fitness_custom_foods || [])
+    setFavoriteFoods(state.fitness_favorite_foods || [])
+    setRecentFoods(state.fitness_recent_foods || [])
+  }
+
+  useEffect(() => {
+    if (!getApiToken()) { setRemoteReady(true); return }
+    fetchRemoteState().then(({ state }) => {
+      applyRemoteState(state)
+      setSyncStatus('synced')
+    }).catch(() => setSyncStatus('offline')).finally(() => setRemoteReady(true))
+  }, [])
+
+  useEffect(() => {
+    if (!remoteReady || !getApiToken()) return
+    setSyncStatus('syncing')
+    saveRemoteState(getStateSnapshot()).then(() => setSyncStatus('synced')).catch(() => setSyncStatus('offline'))
+  }, [remoteReady, user, profile, settings, workouts, exercises, foods, meals, weightEntries, waterEntries, activityEntries, sleepEntries, goals, habits, records, notifications, xp, runs, macroTargets, macroEntries, customFoods, favoriteFoods, recentFoods])
+
+  async function login({ email, name, password }) {
+    if (password) {
+      try {
+        const result = await loginAccount({ email, password })
+        setApiToken(result.token)
+        applyRemoteState(await fetchRemoteState().then((response) => response.state))
+        setSyncStatus('synced')
+        return result.user
+      } catch {
+        setSyncStatus('offline')
+      }
+    }
     const u = { id: `user-${Date.now()}`, email, name }
     setUser(u)
     safeWrite('fitness_user', u)
     // ensure profile has name
     setProfileState((p) => ({ ...p, name: name || p.name }))
+    return u
   }
 
-  function register({ email, name }) {
-    login({ email, name })
+  async function register({ email, name, password }) {
+    if (password) {
+      try {
+        const result = await registerAccount({ email, name, password })
+        setApiToken(result.token)
+        await saveRemoteState(getStateSnapshot())
+        setUser(result.user)
+        setSyncStatus('synced')
+        return result.user
+      } catch {
+        setSyncStatus('offline')
+      }
+    }
+    return login({ email, name, password })
   }
 
   function logout() {
     setUser(null)
+    setApiToken(null)
+    setSyncStatus('local')
     safeWrite('fitness_user', null)
   }
 
@@ -345,6 +425,7 @@ export function FitnessProvider({ children }) {
     saveCustomFood,
     deleteCustomFood,
     toggleFavoriteFood,
+    syncStatus,
   }
 
   return <FitnessContext.Provider value={value}>{children}</FitnessContext.Provider>
