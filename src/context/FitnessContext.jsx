@@ -153,6 +153,10 @@ export function FitnessProvider({ children }) {
     setWorkouts((s) => s.filter((w) => w.id !== id))
   }
 
+  function updateWorkout(id, changes) {
+    setWorkouts((s) => s.map((workout) => (workout.id === id ? { ...workout, ...changes } : workout)))
+  }
+
   function addMeal(item) {
     setMeals((s) => {
       const next = [item, ...s]
@@ -280,6 +284,7 @@ export function FitnessProvider({ children }) {
     // operations
     addWorkout,
     deleteWorkout,
+    updateWorkout,
     addMeal,
     addFood,
     addWeightEntry,

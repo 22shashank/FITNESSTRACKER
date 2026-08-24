@@ -8,7 +8,8 @@
     "build": "vite build",
     "test:storage": "node scripts/storage-smoke.mjs",
     "test:core": "node scripts/automated-core-smoke.mjs",
-    "test:headless": "npm run test:storage && npm run test:core",
+    "test:analytics": "node scripts/analytics-smoke.mjs",
+    "test:headless": "npm run test:storage && npm run test:core && npm run test:analytics",
     "lint": "eslint .",
     "preview": "vite preview"
   },

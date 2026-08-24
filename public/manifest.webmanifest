@@ -1,0 +1,10 @@
+{
+  "name": "FitGrid Fitness Analytics",
+  "short_name": "FitGrid",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#34d399",
+  "description": "A local-first fitness and performance analytics platform.",
+  "icons": []
+}

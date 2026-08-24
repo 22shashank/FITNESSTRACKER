@@ -1,17 +1,22 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { BarChart3, Calculator, ChevronLeft, ChevronRight, Copy, Heart, Plus, Search, Settings2, Trash2, Utensils, X } from 'lucide-react'
-import { Bar, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import Modal from '../components/Modal'
 import { useFitness } from '../context/FitnessContext'
 import { getAllMacroFoods } from '../services/macroStorage'
-import { MACRO_FOODS, scaleMacroFood } from '../data/macroFoods'
+import { scaleMacroFood } from '../data/macroFoods'
 
 const MEALS = ['Breakfast', 'Lunch', 'Snacks', 'Dinner']
 const COLORS = { calories: '#34d399', protein: '#60a5fa', carbs: '#fbbf24', fat: '#fb7185' }
 const todayIso = () => new Date().toISOString().slice(0, 10)
 const round = (value) => Number(Number(value || 0).toFixed(1))
 const emptyForm = { foodName: '', servingSize: 100, servingLabel: 'g', calories: 0, protein: 0, carbs: 0, fat: 0, meal: 'Breakfast', foodId: '' }
+let idSequence = 0
+
+function nextId(prefix) {
+  idSequence += 1
+  return `${prefix}-${idSequence}`
+}
 
 function totalsFor(entries) {
   return entries.reduce((total, entry) => ({
@@ -89,10 +94,10 @@ export default function MacrosPage() {
   const distribution = [['Protein', totals.protein, COLORS.protein], ['Carbs', totals.carbs, COLORS.carbs], ['Fat', totals.fat, COLORS.fat]]
   const remaining = { calories: macroTargets.calories - totals.calories, protein: macroTargets.protein - totals.protein, carbs: macroTargets.carbs - totals.carbs, fat: macroTargets.fat - totals.fat }
   function openAdd(food) { const base = food ? { ...emptyForm, foodId: food.id, foodName: food.name, servingSize: food.serving, servingLabel: food.unit, ...scaleMacroFood(food, food.serving) } : { ...emptyForm }; setForm(base); setModal('food') }
-  function saveEntry() { const entry = { ...form, id: form.id || `macro-${Date.now()}`, name: form.foodName, date, createdAt: form.createdAt || new Date().toISOString(), servingSize: Number(form.servingSize), calories: Number(form.calories), protein: Number(form.protein), carbs: Number(form.carbs), fat: Number(form.fat) }; form.id ? updateMacroEntry(entry.id, entry) : addMacroEntry(entry); setModal(null) }
-  function duplicate(entry) { addMacroEntry({ ...entry, id: `macro-${Date.now()}`, createdAt: new Date().toISOString(), date }) }
+  function saveEntry() { const entry = { ...form, id: form.id || nextId('macro'), name: form.foodName, date, createdAt: form.createdAt || todayIso(), servingSize: Number(form.servingSize), calories: Number(form.calories), protein: Number(form.protein), carbs: Number(form.carbs), fat: Number(form.fat) }; form.id ? updateMacroEntry(entry.id, entry) : addMacroEntry(entry); setModal(null) }
+  function duplicate(entry) { addMacroEntry({ ...entry, id: nextId('macro'), createdAt: todayIso(), date }) }
   function shiftDate(amount) { const next = new Date(`${date}T12:00:00`); next.setDate(next.getDate() + amount); setDate(next.toISOString().slice(0, 10)) }
-  function saveCustom() { if (!customForm.name.trim()) return; const food = { id: `custom-${Date.now()}`, name: customForm.name, serving: Number(customForm.serving), unit: 'g', ...customForm, category: 'Custom' }; saveCustomFood(food); setCustomForm({ name: '', serving: 100, calories: 0, protein: 0, carbs: 0, fat: 0 }); setModal(null) }
+  function saveCustom() { if (!customForm.name.trim()) return; const food = { id: nextId('custom'), name: customForm.name, serving: Number(customForm.serving), unit: 'g', ...customForm, category: 'Custom' }; saveCustomFood(food); setCustomForm({ name: '', serving: 100, calories: 0, protein: 0, carbs: 0, fat: 0 }); setModal(null) }
   const percent = (value, target) => target ? Math.min(Math.round((value / target) * 100), 100) : 0
 
   return <div className="space-y-6 pb-10">

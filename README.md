@@ -1,4 +1,4 @@
-# FitnessTracker (local-first)
+# FitGrid Fitness Analytics
 
 Run locally:
 
@@ -7,7 +7,47 @@ npm install
 npm run dev
 ```
 
-This app is frontend-only; data is persisted to `localStorage` and demo data can be loaded from the auth screen.
+This is a frontend-only, local-first personal fitness and performance analytics platform. Data is persisted to `localStorage`, demo data can be loaded from Settings, and the app includes an installable offline shell.
+
+## Product Features
+
+- Workout, nutrition, macro, weight, water, sleep, activity, goal, habit, and PR tracking
+- Macro dashboard with serving-size calculations, custom foods, favorites, recents, targets, history, and calendar
+- Dashboard analytics for calories, protein, steps, workouts, sleep, weight, and selectable 7/30/90-day trends
+- Reusable analytics utilities for workout volume, estimated 1RM, progression, macro aggregation, and goal progress
+- Local fallback fitness assistant at `/assistant`; no API key is shipped to the browser
+- Demo data, JSON export/import, reset flow, and defensive localStorage handling
+
+## Architecture
+
+```text
+Pages and components
+	|
+FitnessContext and assistant services
+	|
+analytics.js, macroStorage.js, storage.js
+	|
+localStorage / PWA cache
+```
+
+The provider is the current state boundary. Storage and analytics are kept in services/utilities so a future REST adapter can replace persistence without changing page contracts. LocalStorage authentication is a demo convenience and is not presented as secure authentication.
+
+## Tech Stack
+
+React 19, React Router, Vite, Tailwind CSS, Lucide React, Recharts, and browser localStorage.
+
+## Testing and Build
+
+```bash
+npm run test:headless
+npm run build
+```
+
+The smoke suite covers storage import/export/reset, existing core records, workout metrics, 1RM, progression, macro aggregation, and goal progress.
+
+## PWA and Future Work
+
+The manifest and service worker cache the application shell. Locally persisted fitness data remains available offline. Future work includes extracting feature-specific hooks, adding a server-side REST adapter, richer workout set logging and PR detection, component tests, and a user-controlled light theme.
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

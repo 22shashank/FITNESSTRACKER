@@ -93,9 +93,17 @@ export function exportAllData() {
 export function importAllData(json) {
   try {
     const parsed = typeof json === 'string' ? JSON.parse(json) : json
-    Object.entries(parsed).forEach(([k, v]) => safeWrite(k, v))
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false
+    const allowedKeys = new Set(Object.keys(DEFAULT_STORE))
+    const entries = Object.entries(parsed).filter(([key]) => allowedKeys.has(key))
+    if (!entries.length) return false
+    for (const [key, value] of entries) {
+      if (value === undefined) return false
+      if (Array.isArray(DEFAULT_STORE[key]) && !Array.isArray(value)) return false
+      safeWrite(key, value)
+    }
     return true
-  } catch (e) {
+  } catch {
     return false
   }
 }
