@@ -7,6 +7,7 @@ import {
   DEFAULT_STORE,
 } from '../services/storage'
 import { loadMacroState, writeMacroState } from '../services/macroStorage'
+import { detectNewPersonalRecords, derivePersonalRecords } from '../utils/analytics'
 
 const FitnessContext = createContext(null)
 
@@ -144,17 +145,35 @@ export function FitnessProvider({ children }) {
   function addWorkout(item) {
     setWorkouts((s) => {
       const next = [item, ...s]
+      const newRecords = detectNewPersonalRecords(s, next)
+      if (newRecords.length) {
+        setRecords((existing) => [...newRecords, ...existing.filter((record) => !newRecords.some((nextRecord) => nextRecord.id === record.id))])
+        setNotifications((existing) => [{ id: `notification-${Date.now()}`, text: `New PR unlocked: ${newRecords[0].exercise}`, type: 'success', date: new Date().toISOString() }, ...existing])
+        setXp((existing) => ({ ...existing, xp: existing.xp + (newRecords.length * 100) }))
+      }
       safeWrite('fitness_workouts', next)
       return next
     })
   }
 
   function deleteWorkout(id) {
-    setWorkouts((s) => s.filter((w) => w.id !== id))
+    setWorkouts((s) => {
+      const next = s.filter((w) => w.id !== id)
+      setRecords(derivePersonalRecords(next))
+      return next
+    })
   }
 
   function updateWorkout(id, changes) {
-    setWorkouts((s) => s.map((workout) => (workout.id === id ? { ...workout, ...changes } : workout)))
+    setWorkouts((s) => {
+      const next = s.map((workout) => (workout.id === id ? { ...workout, ...changes } : workout))
+      const newRecords = detectNewPersonalRecords(s, next)
+      if (newRecords.length) {
+        setRecords((existing) => [...newRecords, ...existing.filter((record) => !newRecords.some((nextRecord) => nextRecord.id === record.id))])
+        setXp((existing) => ({ ...existing, xp: existing.xp + (newRecords.length * 100) }))
+      }
+      return next
+    })
   }
 
   function addMeal(item) {
@@ -248,6 +267,23 @@ export function FitnessProvider({ children }) {
     setGoals((s) => s.map((g) => (g.id === id ? { ...g, isComplete: true } : g)))
   }
 
+  function toggleHabit(id, date = new Date().toISOString().slice(0, 10)) {
+    setHabits((current) => current.map((habit) => {
+      if (habit.id !== id) return habit
+      const completedDates = Array.isArray(habit.completedDates) ? habit.completedDates : (habit.completed ? [date] : [])
+      const nextDates = completedDates.includes(date) ? completedDates.filter((item) => item !== date) : [...completedDates, date]
+      if (!completedDates.includes(date)) setXp((previous) => ({ ...previous, xp: previous.xp + 20 }))
+      return { ...habit, completed: nextDates.includes(date), completedDates: nextDates }
+    }))
+  }
+
+  function addHabit(name) {
+    const trimmedName = String(name || '').trim()
+    if (!trimmedName) return false
+    setHabits((current) => [{ id: `habit-${Date.now()}`, name: trimmedName, completed: false, completedDates: [] }, ...current])
+    return true
+  }
+
   function setProfile(p) {
     setProfileState((prev) => {
       const next = { ...prev, ...p }
@@ -293,6 +329,8 @@ export function FitnessProvider({ children }) {
     addSleep,
     addGoal,
     completeGoal,
+    toggleHabit,
+    addHabit,
     setProfile,
     setSettings,
     macroTargets,

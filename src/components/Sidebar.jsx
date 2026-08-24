@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Dumbbell, Utensils, Settings, ChartNoAxesCombined, Bot } from 'lucide-react'
+import { LayoutDashboard, Dumbbell, Utensils, Settings, ChartNoAxesCombined, Bot, Flame } from 'lucide-react'
 
 const links = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -8,6 +8,7 @@ const links = [
   { to: '/nutrition', label: 'Nutrition', icon: Utensils },
   { to: '/macros', label: 'Macros', icon: ChartNoAxesCombined },
   { to: '/assistant', label: 'Assistant', icon: Bot },
+  { to: '/habits', label: 'Habits', icon: Flame },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 

@@ -11,7 +11,8 @@ export default function RecordsPage() {
           <div key={r.id} className="card rounded-2xl p-5">
             <p className="text-sm text-amber-400">PR</p>
             <p className="mt-3 text-xl font-semibold text-white">{r.exercise}</p>
-            <p className="mt-2 text-sm text-slate-300">PR: {r.value}</p>
+            <p className="mt-2 text-sm text-slate-300">{r.metric || 'Personal record'}: {r.value}</p>
+            <p className="mt-2 text-xs text-slate-500">Achieved {r.date || 'recently'}</p>
           </div>
         )) : <div className="text-slate-400">No records yet</div>}
       </div>
