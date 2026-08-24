@@ -6,6 +6,7 @@ import {
   loadDemoData,
   DEFAULT_STORE,
 } from '../services/storage'
+import { loadMacroState, writeMacroState } from '../services/macroStorage'
 
 const FitnessContext = createContext(null)
 
@@ -30,6 +31,12 @@ export function FitnessProvider({ children }) {
   const [notifications, setNotifications] = useState(persisted.fitness_notifications || [])
   const [xp, setXp] = useState(persisted.fitness_xp || { xp: 0, level: 1 })
   const [runs, setRuns] = useState(persisted.fitness_runs || [])
+  const macroState = loadMacroState()
+  const [macroTargets, setMacroTargetsState] = useState(macroState.targets)
+  const [macroEntries, setMacroEntries] = useState(macroState.entries)
+  const [customFoods, setCustomFoods] = useState(macroState.customFoods)
+  const [favoriteFoods, setFavoriteFoods] = useState(macroState.favorites)
+  const [recentFoods, setRecentFoods] = useState(macroState.recents)
 
   useEffect(() => { safeWrite('fitness_user', user) }, [user])
 
@@ -51,6 +58,11 @@ export function FitnessProvider({ children }) {
   useEffect(() => { safeWrite('fitness_notifications', notifications) }, [notifications])
   useEffect(() => { safeWrite('fitness_xp', xp) }, [xp])
   useEffect(() => { safeWrite('fitness_runs', runs) }, [runs])
+  useEffect(() => { writeMacroState('targets', macroTargets) }, [macroTargets])
+  useEffect(() => { writeMacroState('entries', macroEntries) }, [macroEntries])
+  useEffect(() => { writeMacroState('customFoods', customFoods) }, [customFoods])
+  useEffect(() => { writeMacroState('favorites', favoriteFoods) }, [favoriteFoods])
+  useEffect(() => { writeMacroState('recents', recentFoods) }, [recentFoods])
 
   function login({ email, name }) {
     const u = { id: `user-${Date.now()}`, email, name }
@@ -91,6 +103,12 @@ export function FitnessProvider({ children }) {
     setNotifications(demo.fitness_notifications || [])
     setXp(demo.fitness_xp || { xp: 0, level: 1 })
     setRuns(demo.fitness_runs || [])
+    const macros = loadMacroState()
+    setMacroTargetsState(macros.targets)
+    setMacroEntries(macros.entries)
+    setCustomFoods(macros.customFoods)
+    setFavoriteFoods(macros.favorites)
+    setRecentFoods(macros.recents)
   }
 
   function resetDemoDataAction() {
@@ -115,6 +133,11 @@ export function FitnessProvider({ children }) {
     setNotifications(defaults.fitness_notifications || [])
     setXp(defaults.fitness_xp || { xp: 0, level: 1 })
     setRuns(defaults.fitness_runs || [])
+    setMacroTargetsState(loadMacroState().targets)
+    setMacroEntries([])
+    setCustomFoods([])
+    setFavoriteFoods([])
+    setRecentFoods([])
   }
 
   // CRUD helpers
@@ -144,6 +167,35 @@ export function FitnessProvider({ children }) {
       safeWrite('fitness_foods', next)
       return next
     })
+  }
+
+  function setMacroTargets(targets) {
+    setMacroTargetsState((previous) => ({ ...previous, ...targets }))
+  }
+
+  function addMacroEntry(entry) {
+    setMacroEntries((previous) => [entry, ...previous])
+    setRecentFoods((previous) => [entry.foodId, ...previous.filter((id) => id !== entry.foodId)].slice(0, 8))
+  }
+
+  function updateMacroEntry(id, changes) {
+    setMacroEntries((previous) => previous.map((entry) => (entry.id === id ? { ...entry, ...changes } : entry)))
+  }
+
+  function deleteMacroEntry(id) {
+    setMacroEntries((previous) => previous.filter((entry) => entry.id !== id))
+  }
+
+  function saveCustomFood(food) {
+    setCustomFoods((previous) => [food, ...previous.filter((item) => item.id !== food.id)])
+  }
+
+  function deleteCustomFood(id) {
+    setCustomFoods((previous) => previous.filter((food) => food.id !== id))
+  }
+
+  function toggleFavoriteFood(id) {
+    setFavoriteFoods((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [id, ...previous])
   }
 
   function addWeightEntry(entry) {
@@ -238,6 +290,18 @@ export function FitnessProvider({ children }) {
     completeGoal,
     setProfile,
     setSettings,
+    macroTargets,
+    macroEntries,
+    customFoods,
+    favoriteFoods,
+    recentFoods,
+    setMacroTargets,
+    addMacroEntry,
+    updateMacroEntry,
+    deleteMacroEntry,
+    saveCustomFood,
+    deleteCustomFood,
+    toggleFavoriteFood,
   }
 
   return <FitnessContext.Provider value={value}>{children}</FitnessContext.Provider>

@@ -39,6 +39,11 @@ const DEFAULT_STORE = {
   fitness_notifications: [],
   fitness_xp: { xp: 420, level: 2 },
   fitness_runs: [],
+  fitness_macro_targets: { calories: 2250, protein: 140, carbs: 260, fat: 65 },
+  fitness_food_entries: [],
+  fitness_custom_foods: [],
+  fitness_favorite_foods: [],
+  fitness_recent_foods: [],
 };
 
 export function safeRead(key, fallback) {
