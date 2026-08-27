@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { Activity, Flame, Footprints, Moon, Scale, Trophy, Utensils } from 'lucide-react'
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { aggregateMacroEntries, percentage } from '../utils/analytics'
+import VisualImage from '../components/VisualImage'
+import { visualAssets } from '../data/visualAssets'
 
 export default function DashboardPage() {
   const { workouts = [], waterEntries = [], weightEntries = [], activityEntries = [], sleepEntries = [], profile = {}, macroEntries = [], macroTargets = {} } = useFitness()
@@ -47,6 +49,8 @@ export default function DashboardPage() {
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{metricCards.map(([label, value, Icon, color]) => <div key={label} className="card rounded-2xl p-4"><div className="flex items-center gap-2 text-sm text-slate-400"><Icon size={16} style={{ color }} />{label}</div><p className="mt-3 text-xl font-semibold text-white">{value}</p></div>)}</div>
+
+      <section className="card overflow-hidden rounded-2xl"><div className="grid md:grid-cols-[1.25fr_0.75fr]"><div className="p-5 md:p-6"><p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Ready when you are</p><h3 className="mt-2 text-2xl font-semibold text-white">Make today's session count.</h3><p className="mt-2 max-w-lg text-sm text-slate-400">Log the work, watch the trend, and let consistency do the heavy lifting.</p></div><div className="hidden min-h-36 md:block"><VisualImage src={visualAssets.exercise} kind="exercise" alt="Strength training illustration" loading="eager" /></div></div></section>
 
       <Link to="/macros" className="card block rounded-2xl p-5 transition hover:border-emerald-400/50">
         <div className="flex items-center justify-between">

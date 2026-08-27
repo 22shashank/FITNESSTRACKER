@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useFitness } from '../context/FitnessContext'
+import VisualImage from '../components/VisualImage'
+import { visualAssets } from '../data/visualAssets'
 
 export default function GoalsPage() {
   const { goals = [], addGoal, completeGoal } = useFitness()
@@ -15,7 +17,8 @@ export default function GoalsPage() {
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-4">
           {goals.map((goal) => (
-            <div key={goal.id} className="card rounded-2xl p-5">
+            <div key={goal.id} className="card overflow-hidden rounded-2xl">
+              <div className="h-28"><VisualImage src={visualAssets.exercise} kind="exercise" alt={`${goal.category} goal illustration`} /></div><div className="p-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-lg font-semibold text-white">{goal.name}</h4>
@@ -27,7 +30,7 @@ export default function GoalsPage() {
                 <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.min((goal.current / goal.target) * 100, 100)}%` }} />
               </div>
               <p className="mt-2 text-sm text-slate-300">{goal.current}/{goal.target}</p>
-            </div>
+            </div></div>
           ))}
         </div>
 

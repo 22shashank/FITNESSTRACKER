@@ -5,6 +5,8 @@ import Modal from '../components/Modal'
 import { useFitness } from '../context/FitnessContext'
 import { getAllMacroFoods } from '../services/macroStorage'
 import { scaleMacroFood } from '../data/macroFoods'
+import { getFoodVisual } from '../data/visualAssets'
+import VisualImage from '../components/VisualImage'
 
 const MEALS = ['Breakfast', 'Lunch', 'Snacks', 'Dinner']
 const COLORS = { calories: '#34d399', protein: '#60a5fa', carbs: '#fbbf24', fat: '#fb7185' }
@@ -50,6 +52,7 @@ function FoodModal({ form, setForm, foods, onClose, onSave }) {
     setForm({ ...form, servingSize: value, ...scaleMacroFood(selected, value) })
   }
   return <Modal title={form.id ? 'Edit food entry' : 'Add food'} onClose={onClose}>
+    {selected && <div className="mb-4 h-28 overflow-hidden rounded-xl"><VisualImage src={getFoodVisual(selected.category)} kind="food" alt={`${selected.name} food illustration`} loading="eager" /></div>}
     <div className="grid gap-4 md:grid-cols-2">
       <label className="md:col-span-2 text-sm text-slate-300">Food Name
         <input value={form.foodName} onChange={(event) => setForm({ ...form, foodName: event.target.value })} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white" required />
