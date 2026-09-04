@@ -19,7 +19,7 @@ export default function Sidebar() {
         <div className="rounded-2xl bg-emerald-500/20 p-2 text-emerald-400">FG</div>
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400">Fitness</p>
-          <h1 className="text-lg font-semibold text-white">FitGrid</h1>
+          <h1 className="text-lg font-semibold text-white">FitStack</h1>
         </div>
       </div>
 
