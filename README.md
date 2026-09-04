@@ -1,6 +1,6 @@
-# FitGrid Fitness Analytics
+# FitStack Fitness Analytics
 
-FitGrid is a full-stack personal fitness and performance analytics platform. Registered users sync their fitness state to a Node/Express API backed by SQLite, while localStorage keeps the app useful offline.
+FitStack is a full-stack personal fitness and performance analytics platform. Registered users sync their fitness state to a Node/Express API backed by SQLite, while localStorage keeps the app useful offline.
 
 ## Features
 
