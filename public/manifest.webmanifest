@@ -1,6 +1,6 @@
 {
-  "name": "FitGrid Fitness Analytics",
-  "short_name": "FitGrid",
+  "name": "FitStack Fitness Analytics",
+  "short_name": "FitStack",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#07111f",
